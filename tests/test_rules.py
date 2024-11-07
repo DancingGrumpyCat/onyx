@@ -3,7 +3,9 @@ import onyx.board as ob
 
 def test_place_piece():
     board = rules.OnyxState(ob.chess_like_board(size=2))
-    board.place_piece("a1", "white")
+    rules.Placement({
+        "a1": ["white"]
+    }).do_move(board)
     assert board.pieces == {
         "a1": ["white"],
         "a2": [],
@@ -13,10 +15,14 @@ def test_place_piece():
 
 def test_suffocate_neighbors_1():
     board = rules.OnyxState(ob.chess_like_board(size=2))
-    board.place_piece("a1", "white")
-    board.place_piece("b1", "black")
-    board.place_piece("a2", "black")
-    board.place_piece("b2", "black")
+    rules.Placement({
+        "a1": ["white"]
+    }).do_move(board)
+    rules.Placement({
+        "b1": ["black"],
+        "a2": ["black"],
+        "b2": ["black"],
+    }).do_move(board)
     assert board.pieces == {
         "a1": [],
         "a2": ["black"],
@@ -26,9 +32,15 @@ def test_suffocate_neighbors_1():
 
 def test_suffocate_neighbors_2():
     board = rules.OnyxState(ob.chess_like_board(size=2))
-    board.place_piece("a1", "white")
-    board.place_piece("b2", "purple")
-    board.place_piece("a2", "black", "black")
+    rules.Placement({
+        "a1": ["white"],
+    }).do_move(board)
+    rules.Placement({
+        "b2": ["purple"],
+    }).do_move(board)
+    rules.Placement({
+        "a2": ["black", "black"],
+    }).do_move(board)
     assert board.pieces == {
         "a1": [],
         "a2": ["black", "black"],
@@ -38,9 +50,15 @@ def test_suffocate_neighbors_2():
 
 def test_basic_scoring_1():
     board = rules.OnyxState(ob.chess_like_board(size=2))
-    board.place_piece("a1", "white")
-    board.place_piece("b2", "purple")
-    board.place_piece("a2", "black", "black")
+    rules.Placement({
+        "a1": ["white"],
+    }).do_move(board)
+    rules.Placement({
+        "b2": ["purple"],
+    }).do_move(board)
+    rules.Placement({
+        "a2": ["black", "black"],
+    }).do_move(board)
     assert board.get_owners() == {
         "a1": {"black"},
         "a2": {"black"},
@@ -60,14 +78,16 @@ def test_basic_scoring_2():
     # - w - Y 1
     # a b c d
 
-    board.place_piece("b1", "white")
-    board.place_piece("a2", "white")
-    board.place_piece("b2", "white")
-    board.place_piece("d1", "yellow", "yellow")
-    board.place_piece("b4", "black")
-    board.place_piece("c4", "black")
-    board.place_piece("c3", "black")
-    board.place_piece("d3", "purple")
+    rules.Placement({
+        "b1": ["white"],
+        "a2": ["white"],
+        "b2": ["white"],
+        "d1": ["yellow", "yellow"],
+        "b4": ["black"],
+        "c4": ["black"],
+        "c3": ["black"],
+        "d3": ["purple"],
+    }).do_move(board)
 
     assert board.get_owners() == {
         "a1": {"white"},

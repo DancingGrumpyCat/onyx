@@ -5,6 +5,15 @@ import collections
 # type Piece = str
 # type Space = str
 
+class Placement:
+    def __init__(self, placements: dict[str, list[str]]):
+        self.placements = placements
+
+    def do_move(self, state: "OnyxState"):
+        for space, pieces in self.placements.items():
+            state.place_piece(space, *pieces)
+        state.suffocate_neighbors(*self.placements.keys())
+
 class OnyxState:
     def __init__(self, board: onyx.board.Graph):
         self.board = board
@@ -13,16 +22,14 @@ class OnyxState:
 
     def place_piece(self, space: str, *pieces: str):
         self.pieces[space].extend(pieces)
-        self._suffocate_neighbors(space)
 
-    def _suffocate_neighbors(self, space: str):
+    def suffocate_neighbors(self, *spaces: str):
         should_suffocate = set()
-        for adjacency in self.board.connections(space):
-            if self._should_suffocate(adjacency):
-                should_suffocate.add(adjacency)
-        if self._should_suffocate(space):
-            should_suffocate.add(space)
-        for adjacency in should_suffocate:
+        for space in spaces:
+            for adjacency in self.board.connections(space):
+                if self._should_suffocate(adjacency):
+                    should_suffocate.add(adjacency)
+        for adjacency in should_suffocate - set(spaces):
             self.pieces[adjacency] = []
 
     def _count_neighbors(self, space: str) -> collections.Counter[str]:

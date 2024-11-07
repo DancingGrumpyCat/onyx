@@ -30,7 +30,11 @@ After you have passed at least once, if your opponent passes, the game ends and 
 
 ### Scoring
 
-Each player scores the sum of their colors' scores, and the second player scores an additional 5 points. Each color scores 1 point for every space occupied or controlled by that color.
+Each player scores a combination of their colors' scores, and the second player scores an additional 5 points. Score once for the color with the greater score and twice for the color with the lesser score.
+
+#### Scoring a color
+
+Each color scores 1 point for every space occupied or controlled by that color.
 
 
 ### Occupation

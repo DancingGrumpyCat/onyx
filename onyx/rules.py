@@ -32,12 +32,15 @@ class OnyxState:
         ))
 
     def _should_suffocate(self, space: str) -> bool:
-        if self.pieces[space] == []:
-            return False
-        my_piece_type = self.pieces[space][-1]
+        return not all(
+            self._is_color_allowed(space, color)
+            for color in self.pieces[space]
+        )
+
+    def _is_color_allowed(self, space: str, color: str) -> bool:
         neighbors = self._count_neighbors(space)
-        neighbors.pop(my_piece_type, None)
-        return sum(neighbors.values()) >= 3
+        neighbors.pop(color, None)
+        return sum(neighbors.values()) < 3
 
     def get_owners(self) -> dict[str, set[str]]:
         owners = {space: set(pieces) for space, pieces in self.pieces.items()}

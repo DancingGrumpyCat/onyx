@@ -10,7 +10,7 @@ Onyx is played on a board with spaces connected by edges. Each player uses two c
 
 ## Turns
 
-On your turn, you may place up to 2 pieces. You may only place pieces on a space if the space is both empty and not surrounded. If you place 0 pieces, you have passed, which we will reference later. If you place 1 piece, it may be of either of your colors. If you place 2 pieces, either place two pieces of the *same* color on the *same* space, or two pieces of *different* colors on two *different* spaces. You can't place two pieces of the same color on two different spaces.
+On your turn, you may place up to 2 pieces. You may only place pieces on a space if the space is both empty and not surrounded. If you place 0 pieces, you have passed, which we will reference later. If you place 1 piece, it may be of either of your colors. If you place 2 pieces, either place two pieces of the *same* color on the *same* space (creating a stack of pieces), or two pieces of *different* colors on two *different* spaces. You can't place two pieces of the same color on two different spaces.
 
 
 ### Move Legality
@@ -29,6 +29,8 @@ After you have passed at least once, if your opponent passes, the game ends and 
 
 
 ### Scoring
+
+Before scoring begins, asynchronously, each player may remove any of their stacks of pieces. Removing stacks may increase your score due to the following rules.
 
 Each player scores a combination of their colors' scores, and the second player scores an additional 5 points. Score once for the color with the greater score and twice for the color with the lesser score.
 

@@ -1,3 +1,4 @@
+from ast import boolop
 import itertools
 import string
 
@@ -31,7 +32,7 @@ def chess_square_name(file: int, rank: int) -> str:
     files = string.ascii_lowercase
     return f"{files[file]}{rank+1}"
 
-def is_valid_chess_position(file, rank, size):
+def is_valid_chess_position(file: int, rank: int, size: int) -> bool:
     return 0 <= file < size and 0 <= rank < size
 
 def chess_adjacencies(file: int, rank: int, size: int):

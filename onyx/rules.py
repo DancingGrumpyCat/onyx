@@ -11,8 +11,17 @@ class Placement:
 
     def do_move(self, state: "OnyxState"):
         for space, pieces in self.placements.items():
-            state.place_piece(space, *pieces)
+            state.place_piece(space, pieces)
         state.suffocate_neighbors(*self.placements.keys())
+
+    def is_legal(self, state: "OnyxState") -> bool:
+        for space, pieces in self.placements.items():
+            if not all(
+                state._is_color_allowed(space, color)
+                for color in pieces
+            ):
+                return False
+        return True
 
 class OnyxState:
     def __init__(self, board: onyx.board.Graph):
@@ -20,7 +29,7 @@ class OnyxState:
         self.pieces: dict[str, list] = {space: [] for space in board.nodes}
         self.ply = 0
 
-    def place_piece(self, space: str, *pieces: str):
+    def place_piece(self, space: str, pieces: list[str]):
         self.pieces[space].extend(pieces)
 
     def suffocate_neighbors(self, *spaces: str):

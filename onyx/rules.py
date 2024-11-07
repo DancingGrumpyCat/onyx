@@ -38,3 +38,24 @@ class OnyxState:
         neighbors = self._count_neighbors(space)
         neighbors.pop(my_piece_type, None)
         return sum(neighbors.values()) >= 3
+
+    def get_owners(self) -> dict[str, set[str]]:
+        owners = {space: set(pieces) for space, pieces in self.pieces.items()}
+        changed = True
+        while changed:
+            changed = False
+            new_owners = {
+                space: previous_owners | set(itertools.chain.from_iterable(
+                    owners[neighbor]
+                    for neighbor in self.board.connections(space)
+                ))
+                if self.pieces[space] == []
+                else previous_owners # space is occupied
+                for space, previous_owners in owners.items()
+            }
+            changed = new_owners != owners
+            owners = new_owners
+        return owners
+
+    def scores_by_color(self) -> collections.Counter[str]:
+        return collections.Counter(itertools.chain.from_iterable(self.get_owners().values()))

@@ -2,8 +2,6 @@ import onyx.board
 import itertools
 import collections
 
-# type Piece = str
-# type Space = str
 
 class Placement:
     def __init__(self, placements: dict[str, list[str]]):
@@ -77,4 +75,6 @@ class OnyxState:
         return owners
 
     def scores_by_color(self) -> collections.Counter[str]:
-        return collections.Counter(itertools.chain.from_iterable(self.get_owners().values()))
+        return collections.Counter(
+            itertools.chain.from_iterable(self.get_owners().values())
+        )

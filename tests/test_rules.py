@@ -36,7 +36,7 @@ def test_suffocate_neighbors_2():
         "b2": [],
     }
 
-def test_basic_scoring():
+def test_basic_scoring_1():
     board = rules.OnyxState(ob.chess_like_board(size=2))
     board.place_piece("a1", "white")
     board.place_piece("b2", "purple")

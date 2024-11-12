@@ -19,7 +19,7 @@ class Placement:
         playable_colors = state.get_playable_colors()
 
         # must not be in removal phase
-        if state.has_p1_passed and state.has_p2_passed:
+        if state.is_removal_phase():
             return False
 
         # test legality of colors
@@ -61,7 +61,7 @@ class Pass:
 
     def is_legal(self, state: "OnyxState"):
         # must not be in removal phase
-        if state.has_p1_passed and state.has_p2_passed:
+        if state.is_removal_phase():
             return False
 
         return True
@@ -82,7 +82,7 @@ class Remove:
 
     def is_legal(self, state: "OnyxState"):
         # must be in removal phase
-        if not (state.has_p1_passed and state.has_p2_passed):
+        if not state.is_removal_phase():
             return False
 
         if state.get_turn() == 1:
@@ -181,6 +181,9 @@ class OnyxState:
             return self.p1_colors
         else:
             return self.p2_colors
+
+    def is_removal_phase(self):
+        return self.has_p1_passed and self.has_p2_passed
 
     def is_game_over(self):
         return self.has_p1_removed and self.has_p2_removed

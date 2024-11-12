@@ -1,5 +1,6 @@
-import onyx.rules as rules
 import onyx.board as ob
+import onyx.rules as rules
+
 
 def test_place_piece():
     board = rules.OnyxState(ob.chess_like_board(size=2))
@@ -114,3 +115,34 @@ def test_basic_scoring_2():
         "black": 10,
         "purple": 8,
     }
+
+
+def test_turn():
+    board = rules.OnyxState(ob.chess_like_board(size=4))
+    assert board.get_playable_colors() == frozenset({"black", "purple"})
+    board.ply += 1
+    assert board.get_playable_colors() == frozenset({"white", "yellow"})
+
+
+def test_illegal_because_playing_opponent_pieces_1():
+    board = rules.OnyxState(ob.chess_like_board(size=4))
+    move = rules.Placement({
+        "e3": ["white", "white"]
+    })
+    assert not move.is_legal(board)
+
+
+def test_illegal_because_playing_opponent_pieces_2():
+    board = rules.OnyxState(ob.chess_like_board(size=4))
+    move = rules.Placement({
+        "e3": ["white", "black"]
+    })
+    assert not move.is_legal(board)
+
+
+def test_illegal_because_playing_mixed_pieces():
+    board = rules.OnyxState(ob.chess_like_board(size=4))
+    move = rules.Placement({
+        "e3": ["black", "purple"]
+    })
+    assert not move.is_legal(board)

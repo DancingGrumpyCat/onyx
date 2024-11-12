@@ -18,6 +18,10 @@ class Placement:
     def is_legal(self, state: "OnyxState") -> bool:
         playable_colors = state.get_playable_colors()
 
+        # must not be in removal phase
+        if state.has_p1_passed and state.has_p2_passed:
+            return False
+
         # test legality of colors
         for space, pieces in self.placements.items():
             if not all(
@@ -25,7 +29,7 @@ class Placement:
                 for color in pieces
             ):
                 return False
-        
+
         # test legality of distribution
         if len(self.placements) not in [1, 2]:
             return False
@@ -36,7 +40,7 @@ class Placement:
                 return False
             if len(set(pieces)) != 1:
                 return False
-        
+
         if len(self.placements) == 2:
             a, b = list(self.placements.values())
             if len(a) != 1 or len(b) != 1:
@@ -44,6 +48,56 @@ class Placement:
             if len({a[0], b[0]}) != 2:
                 return False
 
+        return True
+
+
+class Pass:
+    def do_move(self, state: "OnyxState"):
+        if state.get_turn() == 1:
+            state.has_p1_passed = True
+        else:
+            state.has_p2_passed = True
+        state.ply += 1
+
+    def is_legal(self, state: "OnyxState"):
+        # must not be in removal phase
+        if state.has_p1_passed and state.has_p2_passed:
+            return False
+
+        return True
+
+
+class Remove:
+    def __init__(self, spaces: set[str]):
+        self.spaces = spaces
+
+    def do_move(self, state: "OnyxState"):
+        for space in self.spaces:
+            state.pieces.pop(space, None)
+        if state.get_turn() == 1:
+            state.has_p1_removed = True
+        else:
+            state.has_p2_removed = True
+        state.ply += 1
+
+    def is_legal(self, state: "OnyxState"):
+        # must be in removal phase
+        if not (state.has_p1_passed and state.has_p2_passed):
+            return False
+
+        if state.get_turn() == 1:
+            if state.has_p1_removed:
+                return False
+            colors = list(state.p1_colors)
+        else:
+            if state.has_p2_removed:
+                return False
+            colors = list(state.p2_colors)
+
+        stacks = [[colors[0], colors[0]], [colors[1], colors[1]]]
+        for space in self.spaces:
+            if state.pieces[space] not in stacks:
+                return False
         return True
 
 
@@ -59,6 +113,8 @@ class OnyxState:
         self.ply = 0
         self.p1_colors = frozenset(p1_colors)
         self.p2_colors = frozenset(p2_colors)
+        self.has_p1_passed = self.has_p2_passed = False
+        self.has_p1_removed = self.has_p2_removed = False
 
     def place_piece(self, space: str, pieces: list[str]):
         self.pieces[space].extend(pieces)
@@ -125,3 +181,6 @@ class OnyxState:
             return self.p1_colors
         else:
             return self.p2_colors
+
+    def is_game_over(self):
+        return self.has_p1_removed and self.has_p2_removed
